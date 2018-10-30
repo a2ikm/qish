@@ -1,4 +1,4 @@
-#include "../qish.h"
+#include "qish.h"
 
 char *read_line(FILE *in);
 

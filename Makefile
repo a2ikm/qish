@@ -10,8 +10,8 @@ run_loop.o: run_loop.c
 qish: main.o run_loop.o
 	clang -o qish main.o run_loop.o
 
-run_loop_test.o: test/run_loop_test.c
-	clang -c test/run_loop_test.c
+run_loop_test.o: run_loop_test.c
+	clang -c run_loop_test.c
 
 .PHONY: test
 test: clean test_run_loop
