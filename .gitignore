@@ -1,4 +1,5 @@
 qish
 *.o
 *.swp
+*.test
 
