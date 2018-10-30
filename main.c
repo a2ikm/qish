@@ -1,5 +1,5 @@
 #include "qish.h"
 
 int main(int argc, char **argv) {
-  return run_loop();
+  return run_loop(stdin);
 }

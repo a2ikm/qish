@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int run_loop(void);
+int run_loop(FILE *in);
 
 #endif

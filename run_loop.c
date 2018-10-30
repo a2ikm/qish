@@ -2,7 +2,7 @@
 
 #define QISH_LINE_BUFSIZE 256
 
-char *read_line(void) {
+char *read_line(FILE *in) {
   int ch;
   int pos = 0;
   int bufsize = QISH_LINE_BUFSIZE;
@@ -14,7 +14,7 @@ char *read_line(void) {
   }
 
   while (1) {
-    ch = getchar();
+    ch = fgetc(in);
     if (ch == EOF || ch == '\n') {
       buffer[pos] = '\0';
       return buffer;
@@ -34,12 +34,12 @@ char *read_line(void) {
   }
 }
 
-int run_loop(void) {
+int run_loop(FILE *in) {
   char *line;
 
   while(1) {
     printf("> ");
-    line = read_line();
+    line = read_line(in);
     printf("%s\n", line);
     free(line);
 
