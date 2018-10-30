@@ -43,6 +43,10 @@ int main(int argc, const char **args) {
     line = read_line();
     printf("%s\n", line);
     free(line);
+
+    if (feof(stdin)) {
+      break;
+    }
   }
   return 0;
 }
