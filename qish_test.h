@@ -8,3 +8,14 @@
       exit(1);                                              \
     }                                                       \
   } while(0)
+
+#define EXPECT_I(expected, actual)                          \
+  do {                                                      \
+    int e = (expected);                                     \
+    int a = (actual);                                       \
+    if (e != a) {                                           \
+      fprintf(stderr, "line %d: expected %d, but got %d\n", \
+          __LINE__, e, a);                                  \
+      exit(1);                                              \
+    }                                                       \
+  } while(0)
