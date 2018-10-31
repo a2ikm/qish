@@ -1,4 +1,4 @@
-#define EXPECT(expected, actual)                            \
+#define EXPECT_S(expected, actual)                          \
   do {                                                      \
     char *e = (expected);                                   \
     char *a = (actual);                                     \

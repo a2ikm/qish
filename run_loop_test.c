@@ -8,11 +8,11 @@ int main(int argc, char **argv) {
   FILE *f = fopen("test/lines.txt", "r");
 
   line = read_line(f);
-  EXPECT("1111", line);
+  EXPECT_S("1111", line);
   free(line);
 
   line = read_line(f);
-  EXPECT("2222 3333", line);
+  EXPECT_S("2222 3333", line);
   free(line);
 
   fclose(f);
