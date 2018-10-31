@@ -7,6 +7,9 @@
 #include <string.h>
 #include <unistd.h>
 
+// parse.c
+
+char **tokenize(char *line);
 
 // run_loop.c
 

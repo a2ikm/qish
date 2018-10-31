@@ -19,3 +19,13 @@
       exit(1);                                              \
     }                                                       \
   } while(0)
+
+#define EXPECT_NULL(expr)                                     \
+  do {                                                        \
+    void *p = (expr);                                         \
+    if (p != NULL) {                                          \
+      fprintf(stderr, "line %d: expected NULL, but got %p\n", \
+          __LINE__, p);                                       \
+      exit(1);                                                \
+    }                                                         \
+  } while(0)

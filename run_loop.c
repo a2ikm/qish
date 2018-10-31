@@ -1,14 +1,13 @@
 #include "qish.h"
 
-void run_command(char *command) {
+void run_command(char **argv) {
   pid_t pid, wpid;
   int status;
-  char *argv[2] = { command, NULL };
 
   pid = fork();
   if (pid == 0) {
     // child
-    if (execvp(command, argv) == -1) {
+    if (execvp(argv[0], argv) == -1) {
       fprintf(stderr, "qish: %s\n", strerror(errno));
     }
     exit(1);
@@ -59,12 +58,15 @@ char *read_line(FILE *in) {
 
 int run_loop(FILE *in) {
   char *line;
+  char **tokens;
 
   while(1) {
     printf("> ");
     line = read_line(in);
-    run_command(line);
+    tokens = tokenize(line);
+    run_command(tokens);
     free(line);
+    free(tokens);
 
     if (feof(stdin)) {
       break;
