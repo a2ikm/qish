@@ -19,7 +19,24 @@ void test_vec(void) {
   vec_free(v);
 }
 
+void test_sb(void) {
+  StringBuilder *sb;
+
+  sb = sb_new();
+  EXPECT_I(0, strlen(sb_flush(sb)));
+
+  sb = sb_new();
+  sb_add(sb, 'f');
+  sb_add(sb, 'o');
+  sb_add(sb, 'o');
+  sb_add(sb, 'b');
+  sb_add(sb, 'a');
+  sb_add(sb, 'r');
+  EXPECT_S("foobar", sb_flush(sb));
+}
+
 int main(int argc, char **argv) {
   test_vec();
+  test_sb();
   return 0;
 }

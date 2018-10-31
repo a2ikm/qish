@@ -23,4 +23,15 @@ void vec_free(Vector *v);
 void vec_push(Vector *v, void *elm);
 void **vec_flush(Vector *v);
 
+typedef struct {
+  char *data;
+  int capacity;
+  int len;
+} StringBuilder;
+
+StringBuilder *sb_new(void);
+void sb_free(StringBuilder *sb);
+void sb_add(StringBuilder *sb, char c);
+char *sb_flush(StringBuilder *sb);
+
 #endif
