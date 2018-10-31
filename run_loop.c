@@ -1,5 +1,28 @@
 #include "qish.h"
 
+void run_command(char *command) {
+  pid_t pid, wpid;
+  int status;
+  char *argv[2] = { command, NULL };
+
+  pid = fork();
+  if (pid == 0) {
+    // child
+    if (execvp(command, argv) == -1) {
+      fprintf(stderr, "qish: %s\n", strerror(errno));
+    }
+    exit(1);
+  } else if (pid < 0) {
+    fprintf(stderr, "qish: fork error\n");
+    exit(1);
+  } else {
+    // parent
+    do {
+      wpid = waitpid(pid, &status, WUNTRACED);
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+  }
+}
+
 #define QISH_LINE_BUFSIZE 256
 
 char *read_line(FILE *in) {
@@ -40,7 +63,7 @@ int run_loop(FILE *in) {
   while(1) {
     printf("> ");
     line = read_line(in);
-    printf("%s\n", line);
+    run_command(line);
     free(line);
 
     if (feof(stdin)) {
