@@ -16,12 +16,12 @@ qish: main.o parse.o run_loop.o
 .PHONY: test
 test: clean test_parse test_run_loop test_utils
 
-test_parse: parse.o parse_test.c
-	clang -o parse.test parse.o parse_test.c
+test_parse: parse.o parse_test.c utils.o
+	clang -o parse.test parse.o parse_test.c utils.o
 	./parse.test
 
-test_run_loop: parse.o run_loop.o run_loop_test.c
-	clang -o run_loop.test parse.o run_loop.o run_loop_test.c
+test_run_loop: parse.o run_loop.o run_loop_test.c utils.o
+	clang -o run_loop.test parse.o run_loop.o run_loop_test.c utils.o
 	./run_loop.test
 
 test_utils: utils.o utils_test.c
