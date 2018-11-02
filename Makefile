@@ -10,8 +10,8 @@ parse.o: parse.c
 run_loop.o: run_loop.c
 	clang -c run_loop.c
 
-qish: main.o parse.o run_loop.o
-	clang -o qish main.o parse.o run_loop.o
+qish: main.o parse.o run_loop.o utils.o
+	clang -o qish main.o parse.o run_loop.o utils.o
 
 .PHONY: test
 test: clean test_parse test_run_loop test_utils
