@@ -1,12 +1,17 @@
 #include "qish.h"
 
-void run_command(char **argv) {
+void run_command(char **argv, FILE *out) {
   pid_t pid, wpid;
   int status;
 
   pid = fork();
   if (pid == 0) {
     // child
+    int out_fd = fileno(out);
+    close(1);
+    dup2(out_fd, 1);
+    close(out_fd);
+
     if (execvp(argv[0], argv) == -1) {
       fprintf(stderr, "qish: %s\n", strerror(errno));
     }
@@ -56,7 +61,7 @@ char *read_line(FILE *in) {
   }
 }
 
-int run_loop(FILE *in) {
+int run_loop(FILE *in, FILE *out) {
   char *line;
   char **tokens;
 
@@ -64,7 +69,7 @@ int run_loop(FILE *in) {
     printf("> ");
     line = read_line(in);
     tokens = tokenize(line);
-    run_command(tokens);
+    run_command(tokens, out);
     free(line);
     free(tokens);
 
