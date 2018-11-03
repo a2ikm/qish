@@ -5,13 +5,22 @@ char *read_line(FILE *in);
 
 int main(int argc, char **argv) {
   char *line;
-  FILE *f = fopen("test/lines.txt", "r");
+  FILE *in;
 
-  line = read_line(f);
+  in = fopen("test/input.txt", "w");
+  fputs("1111", in);
+  fclose(in);
+  in = fopen("test/input.txt", "r");
+  line = read_line(in);
   EXPECT_S("1111", line);
   free(line);
+  fclose(in);
 
-  line = read_line(f);
+  in = fopen("test/input.txt", "w");
+  fputs("2222 3333", in);
+  fclose(in);
+  in = fopen("test/input.txt", "r");
+  line = read_line(in);
   EXPECT_S("2222 3333", line);
   free(line);
 

@@ -14,7 +14,10 @@ qish: main.o parse.o run_loop.o utils.o
 	clang -o qish main.o parse.o run_loop.o utils.o
 
 .PHONY: test
-test: clean test_parse test_run_loop test_utils
+test: clean prepare_test test_parse test_run_loop test_utils
+
+prepare_test:
+	mkdir -p test
 
 test_parse: parse.o parse_test.c utils.o
 	clang -o parse.test parse.o parse_test.c utils.o

@@ -2,4 +2,4 @@ qish
 *.o
 *.swp
 *.test
-
+test/*
