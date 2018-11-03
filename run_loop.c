@@ -73,7 +73,7 @@ int run_loop(FILE *in, FILE *out) {
     free(line);
     free(tokens);
 
-    if (feof(stdin)) {
+    if (feof(in)) {
       break;
     }
   }
