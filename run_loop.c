@@ -61,6 +61,14 @@ char *read_line(FILE *in) {
   }
 }
 
+void evaluate(char *script, FILE *out) {
+  char **tokens;
+
+  tokens = tokenize(script);
+  run_command(tokens, out);
+  free(tokens);
+}
+
 int run_loop(FILE *in, FILE *out) {
   char *line;
   char **tokens;
@@ -68,10 +76,8 @@ int run_loop(FILE *in, FILE *out) {
   while(1) {
     printf("> ");
     line = read_line(in);
-    tokens = tokenize(line);
-    run_command(tokens, out);
+    evaluate(line, out);
     free(line);
-    free(tokens);
 
     if (feof(in)) {
       break;
