@@ -1,17 +1,12 @@
 #include "qish.h"
 
-void run_command(char **argv, FILE *out) {
+void run_command(char **argv) {
   pid_t pid, wpid;
   int status;
 
   pid = fork();
   if (pid == 0) {
     // child
-    int out_fd = fileno(out);
-    close(1);
-    dup2(out_fd, 1);
-    close(out_fd);
-
     if (execvp(argv[0], argv) == -1) {
       fprintf(stderr, "qish: %s\n", strerror(errno));
     }
@@ -29,7 +24,7 @@ void run_command(char **argv, FILE *out) {
 
 #define QISH_LINE_BUFSIZE 256
 
-char *read_line(FILE *in) {
+char *read_line(void) {
   int ch;
   int pos = 0;
   int bufsize = QISH_LINE_BUFSIZE;
@@ -41,7 +36,7 @@ char *read_line(FILE *in) {
   }
 
   while (1) {
-    ch = fgetc(in);
+    ch = fgetc(stdin);
     if (ch == EOF || ch == '\n') {
       buffer[pos] = '\0';
       return buffer;
@@ -61,25 +56,25 @@ char *read_line(FILE *in) {
   }
 }
 
-void evaluate(char *script, FILE *out) {
+void evaluate(char *script) {
   char **tokens;
 
   tokens = tokenize(script);
-  run_command(tokens, out);
+  run_command(tokens);
   free(tokens);
 }
 
-int run_loop(FILE *in, FILE *out) {
+int run_loop(void) {
   char *line;
   char **tokens;
 
   while(1) {
     printf("> ");
-    line = read_line(in);
-    evaluate(line, out);
+    line = read_line();
+    evaluate(line);
     free(line);
 
-    if (feof(in)) {
+    if (feof(stdin)) {
       break;
     }
   }

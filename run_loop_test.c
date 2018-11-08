@@ -1,53 +1,99 @@
 #include "qish.h"
 #include "qish_test.h"
 
-char *read_line(FILE *in);
-void evaluate(char *script, FILE *out);
+char *read_line(void);
+void evaluate(char *script);
+
+#define EXPECT_READ_LINE(expected)                                  \
+  do {                                                              \
+    char *e = (expected);                                           \
+    int old_stdin = write_and_redirect_input_fd(e);                 \
+    char *a = read_line();                                          \
+    reset_input_fd(old_stdin);                                      \
+    if (strcmp(e, a) != 0) {                                        \
+      fprintf(stderr, "line %d: expected \"%s\", but got \"%s\"\n", \
+          __LINE__, e, a);                                          \
+      exit(1);                                                      \
+    }                                                               \
+    free(a);                                                        \
+  } while(0)
+
+#define EXPECT_EVALUATE(script, expected)                           \
+  do {                                                              \
+    char *s = (script);                                             \
+    char *e = (expected);                                           \
+    int old_stdout = redirect_output_fd(e);                         \
+    evaluate(s);                                                    \
+    char a[256];                                                    \
+    read_and_reset_output_fd(old_stdout, a);                        \
+    if (strcmp(e, a) != 0) {                                        \
+      fprintf(stderr, "line %d: expected \"%s\", but got \"%s\"\n", \
+          __LINE__, e, a);                                          \
+      exit(1);                                                      \
+    }                                                               \
+  } while(0)
+
+int write_and_redirect_input_fd(char *script) {
+  FILE *in;
+  int old_stdin;
+
+  in = fopen("test/input.txt", "w");
+  fputs(script, in);
+  fclose(in);
+
+  in = fopen("test/input.txt", "r");
+  old_stdin = dup(STDIN_FILENO);
+  close(STDIN_FILENO);
+  dup2(fileno(in), STDIN_FILENO);
+  fclose(in);
+  rewind(stdin);
+
+  return old_stdin;
+}
+
+void reset_input_fd(int old_stdin) {
+  close(STDIN_FILENO);
+  dup2(old_stdin, STDIN_FILENO);
+  close(old_stdin);
+}
+
+int redirect_output_fd(char *script) {
+  FILE *out;
+  int old_stdout;
+
+  out = fopen("test/output.txt", "w");
+  old_stdout = dup(STDOUT_FILENO);
+  close(STDOUT_FILENO);
+  dup2(fileno(out), STDOUT_FILENO);
+  fclose(out);
+  rewind(stdout);
+
+  return old_stdout;
+}
+
+void read_and_reset_output_fd(int old_stdout, char *output) {
+  FILE *out;
+
+  close(STDOUT_FILENO);
+  dup2(old_stdout, STDOUT_FILENO);
+  close(old_stdout);
+
+  out = fopen("test/output.txt", "r");
+  fgets(output, sizeof(output), out);
+  fclose(out);
+}
 
 void test_read_line(void) {
   char *line;
-  FILE *in;
+  int old_stdin;
 
-  in = fopen("test/input.txt", "w");
-  fputs("1111", in);
-  fclose(in);
-  in = fopen("test/input.txt", "r");
-  line = read_line(in);
-  EXPECT_S("1111", line);
-  free(line);
-  fclose(in);
-
-  in = fopen("test/input.txt", "w");
-  fputs("2222 3333", in);
-  fclose(in);
-  in = fopen("test/input.txt", "r");
-  line = read_line(in);
-  EXPECT_S("2222 3333", line);
-  free(line);
-  fclose(in);
-}
-
-void test_evaluate_output(char *command, char *expected) {
-  char actual[256];
-  FILE *out;
-
-  out = fopen("test/output.txt", "w");
-  evaluate(command, out);
-  fclose(out);
-
-  out = fopen("test/output.txt", "r");
-  fgets(actual, sizeof(actual), out);
-  fclose(out);
-
-  if (strcmp(expected, actual) != 0) {
-    fprintf(stderr, "command \"%s\": expected \"%s\", but got \"%s\"\n",
-        command, expected, actual);
-  }
+  EXPECT_READ_LINE("1111");
+  EXPECT_READ_LINE("1111 2222");
 }
 
 void test_evaluate(void) {
-  test_evaluate_output("echo 1", "1\n");
-  test_evaluate_output("echo 1 2", "1 2\n");
+  EXPECT_EVALUATE("echo 1", "1\n");
+  EXPECT_EVALUATE("echo 1 2", "1 2\n");
 }
 
 int main(int argc, char **argv) {

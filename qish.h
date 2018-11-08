@@ -14,7 +14,7 @@ char **tokenize(char *line);
 
 // run_loop.c
 
-int run_loop(FILE *in, FILE *out);
+int run_loop(void);
 
 // utils.c
 
