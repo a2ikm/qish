@@ -22,37 +22,17 @@ void run_command(char **argv) {
   }
 }
 
-#define QISH_LINE_BUFSIZE 256
-
 char *read_line(void) {
   int ch;
-  int pos = 0;
-  int bufsize = QISH_LINE_BUFSIZE;
-  char *buffer = malloc(sizeof(char) * bufsize);
-
-  if (buffer == NULL) {
-    fprintf(stderr, "qish: memory allocation error\n");
-    exit(1);
-  }
+  StringBuilder *sb = sb_new();
 
   while (1) {
     ch = fgetc(stdin);
     if (ch == EOF || ch == '\n') {
-      buffer[pos] = '\0';
-      return buffer;
+      return sb_flush(sb);
     }
 
-    buffer[pos] = ch;
-    pos++;
-
-    if (pos >= bufsize) {
-      bufsize *= 2;
-      buffer = realloc(buffer, bufsize);
-      if (buffer == NULL) {
-        fprintf(stderr, "qish: memory allocation error\n");
-        exit(1);
-      }
-    }
+    sb_add(sb, ch);
   }
 }
 
